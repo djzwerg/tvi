@@ -164,7 +164,7 @@ function theme_tvi_breadcrumb($term, $view) {
  */
 function theme_tvi_term_description($term) {
   if (is_object($term)) {
-		return '<div class="tvi-term-desc">' . $term->description . '</div>';
+		return '<div class="tvi-term-desc">' . filter_xss_admin($term->description) . '</div>';
   }
 }
 
