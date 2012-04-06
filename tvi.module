@@ -118,9 +118,6 @@ function tvi_taxonomy_term_delete($term) {
  */
 function tvi_theme($existing, $type, $theme, $path) {
   return array(
-    'tvi_title' => array(
-      'arguments' => array('term' => NULL, 'view' => NULL),
-    ),
     'tvi_breadcrumb' => array(
       'arguments' => array('term' => NULL, 'view' => NULL),
     ),
@@ -129,22 +126,6 @@ function tvi_theme($existing, $type, $theme, $path) {
     ),
   );
 }
-
-//------------------------------------------------------------------------------
-// Theme functions
-//------------------------------------------------------------------------------
-
-/**
- * Return the taxonomy page title (for active view overrides).
- *
- * We just default to letting views take care of that.  Override if you wish.
- */
-function theme_tvi_title($term, $view) {
-	// TODO convert below to views 3.x (thats D7 right?)
-	return $view->get_title();
-}
-
-//------------------------------------------------------------------------------
 
 /**
  * Return the taxonomy page breadcrumb (for active view overrides).
@@ -202,17 +183,17 @@ function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
     else {
       $view->set_arguments(array($tid->tid, $depth));
     }
-
+    
     $view->build();
     
     // TODO FIX below
-    // drupal_set_title(theme('tvi_title', $term->name, $view));
     // drupal_set_breadcrumb(theme('tvi_breadcrumb', $term->name, $view));
     // We might be using the default view.
-    return ((isset($desc)) ? $desc : '') . $view->preview();
     
-    
+    drupal_set_title($view->get_title());
+    return ((isset($desc)) ? $desc : '') . $view->preview();  
   }
+  
   // Taxonomy is last resort - used if no standard views are found
   module_load_include('inc', 'taxonomy', 'taxonomy.pages');
   return taxonomy_term_page($term);
