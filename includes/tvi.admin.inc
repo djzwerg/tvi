@@ -5,11 +5,11 @@
  */
 function tvi_display_options_ahah() {
 
-  $view_id = $_GET['view_id'];
+  $view_name = $_GET['view_name'];
   $options = '';
 
-  if ($view_id > 0) {
-    foreach (tvi_get_view_displays($view_id) as $name => $label) {
+  if ($view_name > 0) {
+    foreach (tvi_get_view_displays($view_name) as $name => $label) {
       $options .= "<option value='$name'>$label</option>";
     }
   }
@@ -61,7 +61,7 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   drupal_add_css("$path/tvi.css");
 
   // Add validate and submit handlers
-  //$form['#validate'][] = 'tvi_validate_handler';
+  $form['#validate'][] = 'tvi_validate_handler';
   $form['#submit'][]   = 'tvi_submit_handler';
   // Form container
   $form['tvi'] = array(
@@ -98,11 +98,11 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   );
 
   //  View selector
-  $form['tvi']['view_id'] = array(
+  $form['tvi']['view_name'] = array(
     '#id' => 'tvi-view-selector',
     '#type' => 'select',
     '#title' => t('Using the view'),
-    '#default_value' => ($settings->view_id ? $settings->view_id : NULL),
+    '#default_value' => ($settings->view_name ? $settings->view_name : NULL),
     '#options' => tvi_get_views(),
     '#description' => t('The view that you wish to use for this display'),
   );
@@ -112,8 +112,8 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
     '#type' => 'select',
     '#title' => t('View display'),
     '#default_value' => (
-      $settings->view_id
-      ? $settings->view_id . ':' . $settings->display
+      $settings->view_name
+      ? $settings->view_name . ':' . $settings->display
       : NULL
     ),
     '#options' => tvi_get_view_displays(), // Assume no Javascript
@@ -138,17 +138,10 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
 function tvi_validate_handler($form, &$form_state) {
 
   $values = $form_state['values']['tvi'];
-  $view   = views_get_view($values['view_id']);
+  $view   = views_get_view($values['view_name']);
 
-  list($view_id, $display_name)           = explode(':', $values['display']);
+  list($view_name, $display_name) = explode(':', $values['display']);
   $form_state['values']['tvi']['display'] = $display_name;
-
-  if ($view->vid != $view_id) {
-    form_set_error('tvi][display',
-      t('You must select a display from the selected view.'
-        . '  You wouldn\'t have this problem if you would enable Javascript.')
-    );
-  }
 }
 
 /**
@@ -172,10 +165,10 @@ function tvi_get_views($return_object = FALSE) {
   foreach (views_get_all_views() as $view) {
 
     if ($return_object) {
-      $views[$view->vid] = $view;
+      $views[$view->name] = $view;
     }
     else {
-      $views[$view->vid] = $view->name;
+      $views[$view->name] = $view->name;
     }
   }
   return $views;
@@ -190,11 +183,11 @@ function tvi_get_view_displays($view = NULL) {
   $displays = array();
 
   if ($view === NULL) {
-    foreach(tvi_get_views(TRUE) as $view_id => $view) {
+    foreach(tvi_get_views(TRUE) as $view_name => $view) {
     	foreach($view->display as $display_name => $display) {
       	// Suppress the 'default' plugin display
         $add = ($display->display_plugin != 'default') ? ' - ' . $display->display_plugin : '';
-        $displays[$view_id . ':' . $display_name] = $view->name . ' - ' . $display->display_title . $add;
+        $displays[$view_name . ':' . $display_name] = $view->name . ' - ' . $display->display_title . $add;
       }
     }
   }
@@ -207,7 +200,7 @@ function tvi_get_view_displays($view = NULL) {
       foreach($view->display as $display_name => $display) {
         // Suppress the 'default' plugin display
         $add = ($display->display_plugin != 'default') ? ' - ' . $display->display_plugin : '';
-        $displays[$view->vid . ':' . $display_name] = $display->display_title . $add;
+        $displays[$view->name . ':' . $display_name] = $display->display_title . $add;
       }
     }
   }
