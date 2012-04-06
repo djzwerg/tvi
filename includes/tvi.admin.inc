@@ -1,11 +1,4 @@
 <?php
-//******************************************************************************
-// TVI Administration Interface
-//******************************************************************************
-
-//------------------------------------------------------------------------------
-// Menu callbacks
-//------------------------------------------------------------------------------
 
 /**
  * Return html option set of available displays for view with specified view id
@@ -24,10 +17,6 @@ function tvi_display_options_ahah() {
   exit;
 }
 
-//------------------------------------------------------------------------------
-// Administrative forms
-//------------------------------------------------------------------------------
-
 /**
  * Adds TVI administration form to the vocabulary edit page
  *
@@ -35,19 +24,15 @@ function tvi_display_options_ahah() {
  */
 function tvi_vocab_form(&$form) {
 
-  if (!($vid = $form['vid']['#value'])) {
+  $vid = array_key_exists('vid', $form) ? $form['vid']['#value'] : '';
+  
+  if (!$vid) {
     return;
   }
-  // A bit of re-ordering
-  //$form['identification']['#weight'] = -4; // core taxonomy fieldset
-  //$form['content_types']['#weight']  = -3; // core taxonomy fieldset
-  //$form['settings']['#weight']       = -2; // core taxonomy fieldset
 
   tvi_include('query');
   tvi_taxonomy_admin_form($form, tvi_load_settings($vid, TVI_TYPE_VOCAB));
 }
-
-//------------------------------------------------------------------------------
 
 /**
  * Adds TVI administration form to the term edit page
@@ -59,15 +44,10 @@ function tvi_term_form(&$form) {
   if (!($tid = $form['#term']['tid'])) {
     return;
   }
-  // A bit of re-ordering
-  //$form['identification']['#weight'] = -2; // core taxonomy fieldset
-  //$form['advanced']['#weight']       =  0; // core taxonomy fieldset
 
   tvi_include('query');
   tvi_taxonomy_admin_form($form, tvi_load_settings($tid, TVI_TYPE_TERM));
 }
-
-//------------------------------------------------------------------------------
 
 /**
  * The main TVI administration form.
@@ -150,8 +130,6 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   );
 }
 
-//------------------------------------------------------------------------------
-
 /**
  * Validate the TVI administration form submission.
  *
@@ -173,8 +151,6 @@ function tvi_validate_handler($form, &$form_state) {
   }
 }
 
-//------------------------------------------------------------------------------
-
 /**
  * Save the view taxonomy data to the database.
  */
@@ -185,10 +161,6 @@ function tvi_submit_handler($form, &$form_state) {
     tvi_update_settings($settings);
   }
 }
-
-//------------------------------------------------------------------------------
-// Internal utilities
-//------------------------------------------------------------------------------
 
 /**
  * Gather a listing of all views so that the admin may choose ANY view
@@ -208,8 +180,6 @@ function tvi_get_views($return_object = FALSE) {
   }
   return $views;
 }
-
-//------------------------------------------------------------------------------
 
 /**
  * Gathers the available display options for the view operating on this term
@@ -243,5 +213,3 @@ function tvi_get_view_displays($view = NULL) {
   }
   return $displays;
 }
-
-//------------------------------------------------------------------------------
