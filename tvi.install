@@ -1,7 +1,4 @@
 <?php
-//------------------------------------------------------------------------------
-// Drupal hooks
-//------------------------------------------------------------------------------
 
 /**
  * Implementation of hook_schema().
@@ -55,16 +52,12 @@ function tvi_schema() {
   return $schema;
 }
 
-//------------------------------------------------------------------------------
-
 /**
  * Implementation of hook_install().
  * 
  * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_install/7
  */
 function tvi_install() {
-	// Create tables.
-  drupal_install_schema('tvi');
   
   // Ensure weights are ok.
   $view_info = db_select('system', 's')
@@ -79,17 +72,3 @@ function tvi_install() {
           ->fields(array('weight' => $view_info->weight + 5))
           ->execute();
 }
-
-//------------------------------------------------------------------------------
-
-/**
- * Implementation of hook_uninstall().
- * 
- * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_uninstall/7
- */
-function tvi_uninstall() {
-  // Remove tables.
-  drupal_uninstall_schema('tvi');
-}
-
-//------------------------------------------------------------------------------
