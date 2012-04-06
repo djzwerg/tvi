@@ -14,7 +14,7 @@ function tvi_default_settings($type = TVI_TYPE_TERM, $xid = 0) {
   $settings->type = $type;
   $settings->xid  = $xid;
   
-  $settings->view_id = 0;
+  $settings->view_name = 0;
   $settings->display = TVI_DEFAULT_DISPLAY;
   $settings->status  = 0;
   
@@ -70,7 +70,7 @@ function tvi_update_settings($settings) {
         ->condition('type', $settings->type)
         ->condition('xid', $settings->xid)
         ->fields(array(
-            'view_id' => $settings->view_id,
+            'view_name' => $settings->view_name,
             'display' => $settings->display,
             'status' => $settings->status,
           ))
@@ -81,7 +81,7 @@ function tvi_update_settings($settings) {
         ->fields(array(
             'type' => $settings->type,
             'xid' => $settings->xid,
-            'view_id' => $settings->view_id,
+            'view_name' => $settings->view_name,
             'display' => $settings->display,
             'status' => $settings->status,
           ))
