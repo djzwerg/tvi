@@ -30,7 +30,11 @@ function tvi_default_settings($type = TVI_TYPE_TERM, $xid = 0) {
  * flag is set.
  */
 function tvi_load_settings($xid, $type = TVI_TYPE_TERM, $return_default = TRUE) {
-	
+
+  if ($type == TVI_TYPE_TERM && module_exists('uuid')) {
+    $xid = reset(entity_get_uuid_by_id('taxonomy_term', array($xid)));
+  }
+
   $settings = db_select('tvi_settings', 'tvi')
           ->fields('tvi')
           ->condition('tvi.type', $type)
@@ -93,6 +97,11 @@ function tvi_update_settings($settings) {
 //------------------------------------------------------------------------------
 
 function tvi_remove_settings($xid, $type = TVI_TYPE_TERM) {
+
+  if ($type == TVI_TYPE_TERM && module_exists('uuid')) {
+    $xid = reset(entity_get_uuid_by_id('taxonomy_term', array($xid)));
+  }
+
   $return = db_delete('tvi_settings')
       ->condition('type', $settings->type)
       ->condition('xid', $settings->xid)
