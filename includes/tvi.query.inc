@@ -17,10 +17,11 @@ function tvi_default_settings($type = TVI_TYPE_TERM, $xid = 0) {
   $settings->view_name = 0;
   $settings->display = TVI_DEFAULT_DISPLAY;
   $settings->status  = 0;
+  $settings->inherit = 0;
 
   $settings->is_default = TRUE;
 
-  return $settings;	
+  return $settings;
 }
 
 //------------------------------------------------------------------------------
@@ -38,11 +39,11 @@ function tvi_load_settings($xid, $type = TVI_TYPE_TERM, $return_default = TRUE) 
     $xid = reset(entity_get_uuid_by_id('taxonomy_term', array($xid)));
   }
 
-  $settings = variable_get('tvi_' . $type . '_' . $xid);
+  $settings = variable_get('tvi_' . $type . '_' . $xid, FALSE);
   $settings = is_array($settings) ? (object) $settings : $settings;
 
   if (!is_object($settings)) {
-    return ($return_default ? tvi_default_settings($type, $xid) : NULL);
+    return ($return_default ? tvi_default_settings($type, $xid) : FALSE);
   }
 
   $settings->is_default = FALSE;
