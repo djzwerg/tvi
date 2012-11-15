@@ -56,10 +56,10 @@ function tvi_menu() {
  * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_menu_alter/7
  */
 function tvi_menu_alter(&$items) {
-  $items['taxonomy/term/%']['page callback']    = 'tvi_render_view';
-  $items['taxonomy/term/%']['page arguments']   = array(2);
-  $items['taxonomy/term/%']['access callback']  = 'tvi_render_view_access';
-  $items['taxonomy/term/%']['access arguments'] = array(2);
+  $items['taxonomy/term/%taxonomy_term']['page callback']    = 'tvi_render_view';
+  $items['taxonomy/term/%taxonomy_term']['page arguments']   = array(2);
+  $items['taxonomy/term/%taxonomy_term']['access callback']  = 'tvi_render_view_access';
+  $items['taxonomy/term/%taxonomy_term']['access arguments'] = array(2);
 }
 
 //------------------------------------------------------------------------------
