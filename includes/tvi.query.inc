@@ -32,26 +32,6 @@ function tvi_load_settings($xid, $type = TVI_TYPE_TERM, $return_default = TRUE) 
   $settings = variable_get('tvi_' . $type . '_' . $xid, FALSE);
   $settings = is_array($settings) ? (object) $settings : $settings;
 
-  // Special case where the uuid module has been enabled and where terms 
-  // settings are always stored under their tid.
-  if (empty($settings) && $type == TVI_TYPE_TERM && module_exists('uuid')) {
-    // Get the tid of the term.
-    $tid = reset(entity_get_id_by_uuid('taxonomy_term', array($xid)));
-    // Check if the xid was not already a tid because uuid was not defined.
-    if ($tid != $xid) {
-      // Retreive the old settings.
-      $settings = variable_get('tvi_' . $type . '_' . $tid, FALSE);
-      $settings = is_array($settings) ? (object) $settings : $settings;
-      if (!empty($settings)) {
-        // Save them using the uuid instead of the tid.
-        $settings->xid = $xid;
-        tvi_update_settings($settings);
-        // Remove the old setting.
-        variable_del('tvi_' . $type . '_' . $tid);
-      }      
-    }
-  }
-
   if (!is_object($settings)) {
     return ($return_default ? tvi_default_settings($type, $xid) : FALSE);
   }
@@ -101,4 +81,58 @@ function _tvi_get_xid($xid, $type = TVI_TYPE_TERM) {
     }
   }
   return $xid;
+}
+
+/**
+ * Massively convert all settings based on the tid to uuids. 
+ */
+function _tvi_convert_tids_to_uuids() {
+  module_load_include('module', 'uuid');
+  uuid_sync_all();
+
+  $variables = db_select('variable', 'v')
+    ->fields('v')
+    ->condition('v.name', 'tvi_' . TVI_TYPE_TERM . '_%', 'LIKE')
+    ->execute()
+    ->fetchAll();
+
+  foreach ($variables as $variable) {
+    $tid = substr($variable->name, strlen('tvi_' . TVI_TYPE_TERM . '_'));
+    $uuid = reset(entity_get_uuid_by_id('taxonomy_term', array($tid)));
+    if (!empty($uuid) && $tid != $uuid) {
+      db_update('variable')
+        ->fields(array('name' => 'tvi_' . TVI_TYPE_TERM . '_' . $uuid))
+        ->condition('name', $variable->name)
+        ->execute();
+    }
+  }
+}
+
+/**
+ * Massively convert all settings based on the uuids to tids.
+ *
+ * As UUID is disabled we cannot use its functions to retreive the related tid
+ * so we have to get the value from the database.
+ */
+function _tvi_convert_uuids_to_tids() {
+  $variables = db_select('variable', 'v')
+    ->fields('v')
+    ->condition('v.name', 'tvi_' . TVI_TYPE_TERM . '_%', 'LIKE')
+    ->execute()
+    ->fetchAll();
+
+  foreach ($variables as $variable) {
+    $uuid = substr($variable->name, strlen('tvi_' . TVI_TYPE_TERM . '_'));
+    $tid = db_select('taxonomy_term_data', 'ttd')
+      ->fields('ttd', array('tid'))
+      ->condition('ttd.uuid', $uuid)
+      ->execute()
+      ->fetchColumn();
+    if (!empty($tid) && $tid != $uuid) {
+      db_update('variable')
+        ->fields(array('name' => 'tvi_' . TVI_TYPE_TERM . '_' . $tid))
+        ->condition('name', $variable->name)
+        ->execute();
+    }
+  }
 }

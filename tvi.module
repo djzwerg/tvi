@@ -469,4 +469,23 @@ function tvi_include() {
 }
 
 //------------------------------------------------------------------------------
-/*---------- [ Click here to be transformed into a Spider Monkey ] -----------*/
+
+/**
+ * Implements hook_modules_disabled().
+ */
+function tvi_modules_disabled($modules) {
+  if (in_array('uuid', $modules)) {
+    tvi_include('query');
+    _tvi_convert_uuids_to_tids();
+  }
+}
+
+/**
+ * Implements hook_modules_enabled().
+ */
+function tvi_modules_enabled($modules) {
+  if (in_array('uuid', $modules)) {
+    tvi_include('query');
+    _tvi_convert_tids_to_uuids();
+  }
+}
