@@ -94,7 +94,7 @@ function tvi_form_alter(&$form, $form_state, $form_id) {
  */
 function tvi_taxonomy_vocabulary_delete($vocabulary) {
   tvi_include('query');
-  tvi_remove_settings($vocabulary->vid, 'vocab');
+  tvi_remove_settings($vocabulary->vid, TVI_TYPE_VOCAB);
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ function tvi_taxonomy_vocabulary_delete($vocabulary) {
  */
 function tvi_taxonomy_term_delete($term) {
   tvi_include('query');
-  tvi_remove_settings($term->tid, 'term');
+  tvi_remove_settings($term->tid, TVI_TYPE_TERM);
 }
 
 //------------------------------------------------------------------------------
