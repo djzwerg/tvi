@@ -57,11 +57,14 @@ function tvi_update_7001() {
                 ->fetchAll();
   foreach ($settings as $setting) {
     $voc = taxonomy_vocabulary_load($setting->xid);
-    db_update('tvi_settings')
-      ->fields(array('xid' => $voc->machine_name))
-      ->condition('type', $setting->type)
-      ->condition('xid', $setting->xid)
-      ->execute();
+    // Check if the vocabulary still exists.
+    if ($voc !== FALSE && !empty($voc->machine_name)) {
+      db_update('tvi_settings')
+        ->fields(array('xid' => $voc->machine_name))
+        ->condition('type', $setting->type)
+        ->condition('xid', $setting->xid)
+        ->execute();
+    }
   }
 
   if (module_exists('uuid')) {
@@ -73,11 +76,14 @@ function tvi_update_7001() {
 
     foreach ($settings as $setting) {
       $term = taxonomy_term_load($setting->xid);
-      db_update('tvi_settings')
-        ->fields(array('xid' => $term->uuid))
-        ->condition('type', $setting->type)
-        ->condition('xid', $setting->xid)
-        ->execute();
+      // Check if the term still exists and its uuid is defined.
+      if ($term !== FALSE && !empty($term->uuid)) {
+        db_update('tvi_settings')
+          ->fields(array('xid' => $term->uuid))
+          ->condition('type', $setting->type)
+          ->condition('xid', $setting->xid)
+          ->execute();
+      }
     }
   }
 }
