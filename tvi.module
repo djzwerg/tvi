@@ -166,11 +166,10 @@ function theme_tvi_term_description($term) {
  * @TODO: Enable support for > 1 term.
  */
 function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
-	
-	if (is_object($tid)) {
-		$tid = $tid->tid;
-	}
-	
+  if (is_object($tid)) {
+    $tid = $tid->tid;
+  }
+
   list($view, $display, $term, $settings) = tvi_get_view_info($tid);
   //$desc = theme('tvi_term_description', $term->name);
   if (is_object($view) && $display) {
@@ -182,19 +181,19 @@ function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
       $view->set_arguments(array($term->tid, $depth));
     }
     else {
-      $view->set_arguments(array($tid->tid, $depth));
+      $view->set_arguments(array($tid, $depth));
     }
-    
+
     $view->build();
-    
+
     // TODO FIX below
     // drupal_set_breadcrumb(theme('tvi_breadcrumb', $term->name, $view));
     // We might be using the default view.
-    
+
     drupal_set_title(filter_xss_admin($view->get_title()), PASS_THROUGH);
     return ((isset($desc)) ? $desc : '') . $view->preview();  
   }
-  
+
   // Taxonomy is last resort - used if no standard views are found
   module_load_include('inc', 'taxonomy', 'taxonomy.pages');
   return taxonomy_term_page($term);
