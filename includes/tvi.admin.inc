@@ -63,7 +63,7 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   $form['tvi'] = array(
     '#type' => 'fieldset',
     '#title' => t('View usage'),
-    '#weight' => -1,
+    '#weight' => -10,
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
     '#tree' => TRUE,
