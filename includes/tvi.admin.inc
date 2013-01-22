@@ -23,15 +23,12 @@ function tvi_display_options_ahah() {
  * admin/content/taxonomy/edit/vocabulary/$vid
  */
 function tvi_vocab_form(&$form) {
+  if (array_key_exists('#vocabulary', $form)) {
+    $vid = (int) $form['#vocabulary']->vid;
 
-  $vid = array_key_exists('vid', $form) ? $form['vid']['#value'] : '';
-  
-  if (!$vid) {
-    return;
+    tvi_include('query');
+    tvi_taxonomy_admin_form($form, tvi_load_settings($vid, TVI_TYPE_VOCAB));
   }
-
-  tvi_include('query');
-  tvi_taxonomy_admin_form($form, tvi_load_settings($vid, TVI_TYPE_VOCAB));
 }
 
 /**
@@ -40,13 +37,12 @@ function tvi_vocab_form(&$form) {
  * admin/content/taxonomy/edit/term/$tid
  */
 function tvi_term_form(&$form) {
+  if (array_key_exists('#term', $form)) {
+    $tid = (int) $form['#term']['tid'];
 
-  if (!($tid = $form['#term']['tid'])) {
-    return;
+    tvi_include('query');
+    tvi_taxonomy_admin_form($form, tvi_load_settings($tid, TVI_TYPE_TERM));
   }
-
-  tvi_include('query');
-  tvi_taxonomy_admin_form($form, tvi_load_settings($tid, TVI_TYPE_TERM));
 }
 
 /**
