@@ -32,6 +32,26 @@ module_load_include('inc', 'tvi', 'includes/tvi.query');
 //------------------------------------------------------------------------------
 
 /**
+ * Implements hook_permission().
+ *
+ * Adds 1 permission per vocabulary: `define view for terms in VOCABULARY`.
+ */
+function tvi_permission() {
+  $permissions = array();
+
+  foreach (taxonomy_get_vocabularies() as $vocabulary) {
+    $permissions['define view for vocabulary ' . $vocabulary->machine_name] = array(
+      'title' => t('Define the view for the vocabulary %vocabulary', array('%vocabulary' => $vocabulary->name)),
+    );
+    $permissions['define view for terms in ' . $vocabulary->machine_name] = array(
+      'title' => t('Define the view for terms in %vocabulary', array('%vocabulary' => $vocabulary->name)),
+    );
+  }
+
+  return $permissions;
+}
+
+/**
  * Implementation of hook_menu().
  *
  * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_menu/7
@@ -65,23 +85,25 @@ function tvi_menu_alter(&$items) {
 //------------------------------------------------------------------------------
 
 /**
- * Implementation of hook_form_alter().
+ * Implements hook_form_alter().
  *
  * Used to add some items to the taxonomy term and vocab edit pages
- *
- * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_form_alter/7
  */
 function tvi_form_alter(&$form, $form_state, $form_id) {
+  $forms = array('taxonomy_form_term', 'taxonomy_form_vocabulary');
 
-  if ($form_id == 'taxonomy_form_term' && !isset($form_state['confirm_delete'])
-   && !isset($form_state['confirm_parents'])) {
+  if (in_array($form_id, $forms)
+   && !isset($form_state['confirm_delete']) && !isset($form_state['confirm_parents'])
+  ) {
     tvi_include('admin');
-    tvi_term_form($form);
+    if ($form_id == 'taxonomy_form_term' && user_access('define view for terms in ' . $form['#vocabulary']->machine_name)) {
+      tvi_term_form($form);
+    }
+    elseif (user_access('define view for vocabulary ' . $form['#vocabulary']->machine_name)) {
+      tvi_vocab_form($form);
+    }
   }
-  elseif ($form_id == 'taxonomy_form_vocabulary') {
-    tvi_include('admin');
-    tvi_vocab_form($form);
-  }
+
 }
 
 //------------------------------------------------------------------------------
