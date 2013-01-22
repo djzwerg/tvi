@@ -153,7 +153,6 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
       : NULL
     ),
     '#options' => tvi_get_view_displays(), // Assume no Javascript
-    '#description' => t('The view display you select from the option above will be used to render this taxonomy term. <b>NOTE:</b> Views defined for vocabulary are trumped by views for terms.'),
     '#states' => array(
       'disabled' => array(
         '#tvi-status-check' => array('checked' => FALSE),
@@ -163,6 +162,18 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
       ),
     ),
   );
+  if ($settings->type == TVI_TYPE_TERM) {
+    $form['tvi']['display']['#description'] =
+      t('The view display you select from the option above will be used to render this taxonomy term.');
+  }
+  elseif ($settings->type == TVI_TYPE_VOCAB) {
+    $form['tvi']['display']['#description'] =
+      t('The view display you select from the option above will be used to render all the taxonomy terms of this vocabulary except if their settings are overriden.');
+  }
+  else {
+    $form['tvi']['display']['#description'] =
+      t('The view display you select from the option above will be used to render all the taxonomy terms in all the defined vocabularies except if their vocabularies settings or their terms settings are overriden.');
+  }
 }
 
 /**
