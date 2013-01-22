@@ -104,6 +104,9 @@ function tvi_menu_alter(&$items) {
   $items['taxonomy/term/%taxonomy_term']['page arguments']   = array(2);
   $items['taxonomy/term/%taxonomy_term']['access callback']  = 'tvi_render_view_access';
   $items['taxonomy/term/%taxonomy_term']['access arguments'] = array(2);
+
+  // Avoid views to override tvi
+  unset($items['taxonomy/term/%']);
 }
 
 /**
