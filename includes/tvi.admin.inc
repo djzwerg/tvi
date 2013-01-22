@@ -232,8 +232,14 @@ function tvi_get_view_displays() {
 
   foreach (tvi_get_views(TRUE) as $view_name => $view) {
     foreach ($view->display as $display_name => $display) {
-      // Suppress the 'default' plugin display
-      if ($display_name == 'default' || $display->display_plugin == 'default') { continue; }
+      // Ignore the "default" displays
+      if ($display_name == 'default' || $display->display_plugin == 'default') {
+        continue;
+      }
+      // Ignore disabled displays
+      if (array_key_exists('enabled', $display->display_options) && $display->display_options['enabled'] === FALSE) {
+        continue;
+      }
 
       $displays[$view_name . ':' . $display_name] = $view->name . ' - ' . $display->display_title . ' [' . $display->id . ']';
     }
