@@ -227,31 +227,17 @@ function tvi_get_views($return_object = FALSE) {
  * Gathers the available display options for the view operating on this term
  * or vocabulary.
  */
-function tvi_get_view_displays($view = NULL) {
-
+function tvi_get_view_displays() {
   $displays = array();
 
-  if ($view === NULL) {
-    foreach (tvi_get_views(TRUE) as $view_name => $view) {
-      foreach ($view->display as $display_name => $display) {
-        // Suppress the 'default' plugin display
-        $add = ($display->display_plugin != 'default') ? ' - ' . $display->display_plugin : '';
-        $displays[$view_name . ':' . $display_name] = $view->name . ' - ' . $display->display_title . $add;
-      }
+  foreach (tvi_get_views(TRUE) as $view_name => $view) {
+    foreach ($view->display as $display_name => $display) {
+      // Suppress the 'default' plugin display
+      if ($display_name == 'default' || $display->display_plugin == 'default') { continue; }
+
+      $displays[$view_name . ':' . $display_name] = $view->name . ' - ' . $display->display_title . ' [' . $display->id . ']';
     }
   }
-  else {
-    // If it is a name or vid we can use this...
-    if (!is_object($view)) {
-      $view = views_get_view($view);
-    }
-    if (is_object($view)) {
-      foreach ($view->display as $display_name => $display) {
-        // Suppress the 'default' plugin display
-        $add = ($display->display_plugin != 'default') ? ' - ' . $display->display_plugin : '';
-        $displays[$view->name . ':' . $display_name] = $display->display_title . $add;
-      }
-    }
-  }
+
   return $displays;
 }
