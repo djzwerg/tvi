@@ -93,29 +93,6 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
     '#value' => $settings->xid,
   );
 
-  //  View selector
-  $form['tvi']['view_name'] = array(
-    '#id' => 'tvi-view-selector',
-    '#type' => 'select',
-    '#title' => t('Using the view'),
-    '#default_value' => ($settings->view_name ? $settings->view_name : NULL),
-    '#options' => tvi_get_views(),
-    '#description' => t('The view that you wish to use for this display'),
-  );
-  // Display selector
-  $form['tvi']['display'] = array(
-    '#id' => 'tvi-display-selector',
-    '#type' => 'select',
-    '#title' => t('View display'),
-    '#default_value' => (
-      $settings->view_name
-      ? $settings->view_name . ':' . $settings->display
-      : NULL
-    ),
-    '#options' => tvi_get_view_displays(), // Assume no Javascript
-    '#description' => t('The view display you select from the option above will be used to render this taxonomy term. <b>NOTE:</b> Views defined for vocabulary are trumped by views for terms.'),
-  );
-
   // Status toggle switch
   $form['tvi']['status'] = array(
     '#id' => 'tvi-status-check',
@@ -133,8 +110,55 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
       '#title' => t('Child terms will use this settings.'),
       '#default_value' => $settings->inherit,
       '#description' => t('Checking this field will allow to define a view used by the current term and its children recursively while these children does not have their own settings.'),
+      '#states' => array(
+        'disabled' => array(
+          '#tvi-status-check' => array('checked' => FALSE),
+        ),
+        'visible' => array(
+          '#tvi-status-check' => array('checked' => TRUE),
+        ),
+      ),
     );
   }
+
+  //  View selector
+  $form['tvi']['view_name'] = array(
+    '#id' => 'tvi-view-selector',
+    '#type' => 'select',
+    '#title' => t('Using the view'),
+    '#default_value' => ($settings->view_name ? $settings->view_name : NULL),
+    '#options' => tvi_get_views(),
+    '#description' => t('The view that you wish to use for this display'),
+    '#states' => array(
+      'disabled' => array(
+        '#tvi-status-check' => array('checked' => FALSE),
+      ),
+      'visible' => array(
+        '#tvi-status-check' => array('checked' => TRUE),
+      ),
+    ),
+  );
+  // Display selector
+  $form['tvi']['display'] = array(
+    '#id' => 'tvi-display-selector',
+    '#type' => 'select',
+    '#title' => t('View display'),
+    '#default_value' => (
+      $settings->view_name
+      ? $settings->view_name . ':' . $settings->display
+      : NULL
+    ),
+    '#options' => tvi_get_view_displays(), // Assume no Javascript
+    '#description' => t('The view display you select from the option above will be used to render this taxonomy term. <b>NOTE:</b> Views defined for vocabulary are trumped by views for terms.'),
+    '#states' => array(
+      'disabled' => array(
+        '#tvi-status-check' => array('checked' => FALSE),
+      ),
+      'visible' => array(
+        '#tvi-status-check' => array('checked' => TRUE),
+      ),
+    ),
+  );
 }
 
 /**
