@@ -206,18 +206,20 @@ function tvi_submit_handler($form, &$form_state) {
  * Gather a listing of all views so that the admin may choose ANY view
  */
 function tvi_get_views($return_object = FALSE) {
-
   $views = array();
 
-  foreach (views_get_all_views() as $view) {
-
-    if ($return_object) {
-      $views[$view->name] = $view;
-    }
-    else {
-      $views[$view->name] = $view->name;
+  foreach (views_get_enabled_views() as $view) {
+    // Filter views having no display
+    if (count($view->display) > 1) {
+      if ($return_object) {
+        $views[$view->name] = $view;
+      }
+      else {
+        $views[$view->name] = $view->name;
+      }
     }
   }
+
   return $views;
 }
 
