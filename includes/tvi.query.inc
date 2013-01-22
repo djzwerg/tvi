@@ -1,6 +1,7 @@
 <?php
 /**
- * TVI Database Interface
+ * @file
+ * Database interface for the tvi module.
  */
 
 /**
@@ -52,7 +53,7 @@ function tvi_update_settings($settings) {
 }
 
 /**
- * Delete settings information for a taxonomy vocabulary or term in 
+ * Delete settings information for a taxonomy vocabulary or term in
  * the database.
  */
 function tvi_remove_settings($xid, $type = TVI_TYPE_TERM) {
@@ -84,7 +85,7 @@ function _tvi_get_xid($xid, $type = TVI_TYPE_TERM) {
 }
 
 /**
- * Massively convert all settings based on the tid to uuids. 
+ * Massively convert all settings based on the tid to uuids.
  */
 function _tvi_convert_tids_to_uuids() {
   module_load_include('module', 'uuid');
@@ -97,7 +98,7 @@ function _tvi_convert_tids_to_uuids() {
     ->fetchAll();
 
   foreach ($variables as $variable) {
-    $tid = substr($variable->name, strlen('tvi_' . TVI_TYPE_TERM . '_'));
+    $tid = drupal_substr($variable->name, drupal_strlen('tvi_' . TVI_TYPE_TERM . '_'));
     $uuid = reset(entity_get_uuid_by_id('taxonomy_term', array($tid)));
     if (!empty($uuid) && $tid != $uuid) {
       db_update('variable')
@@ -122,7 +123,7 @@ function _tvi_convert_uuids_to_tids() {
     ->fetchAll();
 
   foreach ($variables as $variable) {
-    $uuid = substr($variable->name, strlen('tvi_' . TVI_TYPE_TERM . '_'));
+    $uuid = drupal_substr($variable->name, drupal_strlen('tvi_' . TVI_TYPE_TERM . '_'));
     $tid = db_select('taxonomy_term_data', 'ttd')
       ->fields('ttd', array('tid'))
       ->condition('ttd.uuid', $uuid)

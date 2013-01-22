@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Administration functions for the tvi module.
+ */
 
 /**
  * Return html option set of available displays for view with specified view id
@@ -70,12 +74,11 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   );
 
   // Javascript warning message
+  $js_msg = t('This form is best used with Javascript enabled. Please enable your Javascript, then refresh this page.');
+  $js_msg = '<p class="javascript-warning">' . $js_msg . '</p>';
   $form['tvi']['javascript_message'] = array(
     '#type' => 'markup',
-    '#value' => '<p class="javascript-warning">'
-      . t('This form is best used with Javascript enabled.'
-          . '  Please enable your Javascript, then refresh this page.')
-      . '</p>',
+    '#value' => check_plain($js_msg),
   );
 
   $form['tvi']['is_default'] = array(
@@ -214,9 +217,9 @@ function tvi_get_view_displays($view = NULL) {
   $displays = array();
 
   if ($view === NULL) {
-    foreach(tvi_get_views(TRUE) as $view_name => $view) {
-    	foreach($view->display as $display_name => $display) {
-      	// Suppress the 'default' plugin display
+    foreach (tvi_get_views(TRUE) as $view_name => $view) {
+      foreach ($view->display as $display_name => $display) {
+        // Suppress the 'default' plugin display
         $add = ($display->display_plugin != 'default') ? ' - ' . $display->display_plugin : '';
         $displays[$view_name . ':' . $display_name] = $view->name . ' - ' . $display->display_title . $add;
       }
@@ -228,7 +231,7 @@ function tvi_get_view_displays($view = NULL) {
       $view = views_get_view($view);
     }
     if (is_object($view)) {
-      foreach($view->display as $display_name => $display) {
+      foreach ($view->display as $display_name => $display) {
         // Suppress the 'default' plugin display
         $add = ($display->display_plugin != 'default') ? ' - ' . $display->display_plugin : '';
         $displays[$view->name . ':' . $display_name] = $display->display_title . $add;

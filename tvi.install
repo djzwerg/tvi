@@ -1,9 +1,11 @@
 <?php
+/**
+ * @file
+ * Install, update, and uninstall functions for the tvi module.
+ */
 
 /**
- * Implementation of hook_install().
- *
- * @see http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_install/7
+ * Implements hook_install().
  */
 function tvi_install() {
   // Ensure weights are ok.
@@ -34,7 +36,7 @@ function tvi_uninstall() {
  */
 function tvi_update_7000(&$sandbox) {
   db_drop_primary_key('tvi_settings');
-  db_change_field('tvi_settings', 'xid', 'xid', 
+  db_change_field('tvi_settings', 'xid', 'xid',
     array(
       'type' => 'varchar',
       'length' => 255,
