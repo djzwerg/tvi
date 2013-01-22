@@ -315,17 +315,13 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
       $settings = tvi_load_settings('default', TVI_TYPE_ALL, FALSE);
     }
 
-    if ($settings && $settings->view_name) {
-      $view = views_get_view($settings->view_name);
-    }
-
     $term_info[$tid] = array(
       'term'     => $term,
       'settings' => $settings
     );
 
-    if (isset($view)) {
-      $term_info[$tid]['view'] = $view;
+    if (isset($settings->view)) {
+      $term_info[$tid]['view'] = $settings->view;
     }
   }
 

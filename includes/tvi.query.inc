@@ -13,8 +13,8 @@ function tvi_default_settings($type = TVI_TYPE_TERM, $xid = 0) {
   $settings->type = $type;
   $settings->xid  = $xid;
 
-  $settings->view_name = 0;
-  $settings->display = TVI_DEFAULT_DISPLAY;
+  $settings->view_name = NULL;
+  $settings->display = NULL;
   $settings->status  = 0;
   $settings->inherit = 0;
 
@@ -33,10 +33,40 @@ function tvi_load_settings($xid, $type = TVI_TYPE_TERM, $return_default = TRUE) 
   $settings = variable_get('tvi_' . $type . '_' . $xid, FALSE);
   $settings = is_array($settings) ? (object) $settings : $settings;
 
-  if (!is_object($settings)) {
-    return ($return_default ? tvi_default_settings($type, $xid) : FALSE);
+  $settings = tvi_validate_settings($settings);
+  if ($settings === FALSE && $return_default) {
+    return tvi_default_settings($type, $xid);
   }
 
+  return $settings;
+}
+
+/**
+ * Check if the views and views' displays referenced by the settings still
+ * exists and is still enabled.
+ */
+function tvi_validate_settings($settings) {
+  if (empty($settings) || empty($settings->view_name)) {
+    return FALSE;
+  }
+
+  // Load the view.
+  $view = views_get_view($settings->view_name);
+
+  // If the view does not exist or if it is disabled.
+  if (empty($view) || !empty($view->disabled)) {
+    return FALSE;
+  }
+  // If the view's display does not exist.
+  if (!array_key_exists($settings->display, $view->display)) {
+    return FALSE;
+  }
+  // If the view's display is disabled.
+  if (array_key_exists('enabled', $view->display[$settings->display]->display_options) && $view->display[$settings->display]->display_options['enabled'] === FALSE) {
+    return FALSE;
+  }
+
+  $settings->view = $view;
   $settings->is_default = FALSE;
   return $settings;
 }
