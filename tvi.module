@@ -269,9 +269,6 @@ function tvi_get_view_info($tid) {
   if (is_object($view) && is_object($settings) && $settings->status) {
     $display = $settings->display;
   }
-  if (!($view && $display)) {
-    @list($view, $display) = tvi_get_default_view($tid);
-  }
 
   // Important things to consider:
   //
@@ -346,68 +343,6 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
       return $term_info[$tid]['settings'];
   }
   return NULL;
-}
-
-/**
- * Find views in the system that can be used to display the specified taxonomy
- * term(s) and are outside of the TVI framework.
- *
- * This is a helper function so that we can, in the case there
- * is no TVI view, pass the display off to an applicable view
- * rather than simply using taxonomy displays alone.
- */
-function tvi_get_default_view($tid) {
-
-  static $default_views = array();
-  $is_done = FALSE;
-  if (!array_key_exists($tid, $default_views)) {
-    $views = views_get_all_views();
-    //dpm($views);
-    foreach ($views as $view) {
-      if (isset($view->disabled) && !$view->disabled) {
-        foreach ($view->display as $name => $display) {
-          // Each view can have multiple displays. These may have a path
-          // specified.
-          $plugin = $display->display_plugin;
-
-          // It has a path or it is not eligable.
-          if (!in_array($plugin, array('block', 'feed', 'default'))) {
-            $path = $display->display_options['path'];
-            if (!$path) {
-              continue;
-            }
-            // Exact match
-            if (preg_match("/^taxonomy\/term\/$tid/", $path)) {
-              $default_views[$tid] = array(
-                'view'    => $view,
-                'display' => $name,
-              );
-              $is_done = TRUE;
-              break;  // Return immediately
-            }
-            // Generic match
-            elseif (preg_match("/^taxonomy\/term\/%/", $path)) {
-              $default_views[$tid] = array(
-                'view'    => $view,
-                'display' => $name,
-              );
-            }
-          }
-        }
-      }
-      if ($is_done) {
-        break;
-      }
-    }
-  }
-  $info = isset($default_views[$tid]) ? $default_views[$tid] : NULL;
-  if (is_array($info)) {
-    return array(
-      $info['view'],
-      $info['display']
-    );
-  }
-  return array();
 }
 
 /**
