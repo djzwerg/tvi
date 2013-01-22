@@ -17,6 +17,7 @@ define('TVI_DEFAULT_DISPLAY', 'default');
 /**
  * Taxonomy setting types
  */
+define('TVI_TYPE_ALL', 'all');
 define('TVI_TYPE_TERM', 'term');
 define('TVI_TYPE_VOCAB', 'vocab');
 
@@ -62,6 +63,10 @@ function tvi_modules_enabled($modules) {
 function tvi_permission() {
   $permissions = array();
 
+  $permissions['administer taxonomy views integrator'] = array(
+    'title' => t('Administer Taxonomy Views Integrator'),
+  );
+
   foreach (taxonomy_get_vocabularies() as $vocabulary) {
     $permissions['define view for vocabulary ' . $vocabulary->machine_name] = array(
       'title' => t('Define the view for the vocabulary %vocabulary', array('%vocabulary' => $vocabulary->name)),
@@ -72,6 +77,23 @@ function tvi_permission() {
   }
 
   return $permissions;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function tvi_menu() {
+  $items = array();
+
+  $items['admin/config/user-interface/tvi'] = array(
+    'title' => t('TVI settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('tvi_settings_form'),
+    'access arguments' => array('administer taxonomy views integrator'),
+    'file' => 'includes/tvi.admin.inc',
+  );
+
+  return $items;
 }
 
 /**
@@ -285,8 +307,12 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
 
     // If the term and its parents have no settings, take the vocabulary's one.
     if (!$settings || !$settings->status) {
-      // Then vocabulary override.
       $settings = tvi_load_settings($term->vid, TVI_TYPE_VOCAB, FALSE);
+    }
+
+    // If the vocabulary have no settings, take the global settings.
+    if (!$settings || !$settings->status) {
+      $settings = tvi_load_settings('default', TVI_TYPE_ALL, FALSE);
     }
 
     if ($settings && $settings->view_name) {

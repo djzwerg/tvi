@@ -33,6 +33,23 @@ function tvi_term_form(&$form) {
 }
 
 /**
+ * Create the main settings form.
+ *
+ * admin/config/user-interface/tvi
+ */
+function tvi_settings_form($form, &$form_state) {
+  tvi_include('query');
+  tvi_taxonomy_admin_form($form, tvi_load_settings('default', TVI_TYPE_ALL));
+
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+
+  return $form;
+}
+
+/**
  * The main TVI administration form.
  *
  * This is added to both vocabulary and term edit forms.
@@ -65,7 +82,7 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
 
   $form['tvi']['is_default'] = array(
     '#type' => 'value',
-    '#value' => $settings->is_default,
+    '#value' => $settings->is_default && $settings->type != TVI_TYPE_ALL,
   );
 
   $form['tvi']['type'] = array(
@@ -78,14 +95,16 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
     '#value' => $settings->xid,
   );
 
-  // Status toggle switch
-  $form['tvi']['status'] = array(
-    '#id' => 'tvi-status-check',
-    '#type' => 'checkbox',
-    '#title' => t('Use view override.'),
-    '#default_value' => $settings->status,
-    '#description' => t('Unchecking this field will disable the use of the view when displaying this taxonomy page.'),
-  );
+  if ($settings->type != TVI_TYPE_ALL) {
+    // Status toggle switch
+    $form['tvi']['status'] = array(
+      '#id' => 'tvi-status-check',
+      '#type' => 'checkbox',
+      '#title' => t('Use view override.'),
+      '#default_value' => $settings->status,
+      '#description' => t('Unchecking this field will disable the use of the view when displaying this taxonomy page.'),
+    );
+  }
 
   if ($settings->type == TVI_TYPE_TERM) {
     // Inheritance switch
@@ -152,9 +171,7 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
  * If the view and the display do not line up, throw an error.
  */
 function tvi_validate_handler($form, &$form_state) {
-
   $values = $form_state['values']['tvi'];
-  $view   = views_get_view($values['view_name']);
 
   list($view_name, $display_name) = explode(':', $values['display']);
   $form_state['values']['tvi']['display'] = $display_name;
@@ -164,10 +181,13 @@ function tvi_validate_handler($form, &$form_state) {
  * Save the view taxonomy data to the database.
  */
 function tvi_submit_handler($form, &$form_state) {
-  $settings = (object)$form_state['values']['tvi'];
+  $settings = (object) $form_state['values']['tvi'];
 
   if (!$settings->is_default || $settings->status) {
     tvi_update_settings($settings);
+    if ($settings->type == TVI_TYPE_ALL) {
+      drupal_set_message(t('The configuration options have been saved.'));
+    }
   }
 }
 
