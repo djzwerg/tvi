@@ -5,23 +5,6 @@
  */
 
 /**
- * Return html option set of available displays for view with specified view id
- */
-function tvi_display_options_ahah() {
-
-  $view_name = $_GET['view_name'];
-  $options = '';
-
-  if ($view_name > 0) {
-    foreach (tvi_get_view_displays($view_name) as $name => $label) {
-      $options .= "<option value='$name'>$label</option>";
-    }
-  }
-  print $options;
-  exit;
-}
-
-/**
  * Adds TVI administration form to the vocabulary edit page
  *
  * admin/content/taxonomy/edit/vocabulary/$vid
@@ -55,14 +38,13 @@ function tvi_term_form(&$form) {
  * This is added to both vocabulary and term edit forms.
  */
 function tvi_taxonomy_admin_form(&$form, $settings) {
-
-  $path = drupal_get_path('module', 'tvi');
-  drupal_add_js("$path/tvi.js");
-  drupal_add_css("$path/tvi.css");
-
   // Add validate and submit handlers
   $form['#validate'][] = 'tvi_validate_handler';
   $form['#submit'][]   = 'tvi_submit_handler';
+  // Add JS & CSS
+  $form['#attached']['js'][] = drupal_get_path('module', 'tvi') . '/tvi.js';
+  $form['#attached']['css'][] = drupal_get_path('module', 'tvi') . '/tvi.css';
+
   // Form container
   $form['tvi'] = array(
     '#type' => 'fieldset',

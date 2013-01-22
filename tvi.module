@@ -75,21 +75,6 @@ function tvi_permission() {
 }
 
 /**
- * Implements hook_menu().
- */
-function tvi_menu() {
-
-  // Define a AHAH views display options callback.
-  $items['tvi/js/display_options'] = array(
-    'page callback' => 'tvi_display_options_ahah',
-    'access arguments' => array('administer taxonomy'),
-    'file' => 'includes/tvi.admin.inc',
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
-}
-
-/**
  * Implements hook_menu_alter().
  */
 function tvi_menu_alter(&$items) {
