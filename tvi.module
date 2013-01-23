@@ -288,6 +288,12 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
 
   if (!array_key_exists($tid, $term_info)) {
     $term = taxonomy_term_load($tid);
+
+    // Return nothing when term is empty.
+    if (!$term) {
+      return NULL;
+    }
+
     // Try using term and vocabulary overrides.
     tvi_include('query');
 
