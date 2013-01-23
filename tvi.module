@@ -202,16 +202,7 @@ function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
   //$desc = theme('tvi_term_description', $term->name);
   if (is_object($view) && $display) {
     $view->set_display($display);
-
-    // Using the TVI selected view.
-    if (is_object($term) && is_object($settings) && $settings->status) {
-      //$depth = tvi_get_view_depth($view, $display);
-      $view->set_arguments(array($term->tid, $depth));
-    }
-    else {
-      $view->set_arguments(array($tid, $depth));
-    }
-
+    $view->set_arguments(array($tid, $depth));
     $view->build();
 
     // TODO FIX below
