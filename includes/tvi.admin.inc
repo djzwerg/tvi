@@ -184,8 +184,10 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
 function tvi_validate_handler($form, &$form_state) {
   $values = $form_state['values']['tvi'];
 
-  list($view_name, $display_name) = explode(':', $values['display']);
-  $form_state['values']['tvi']['display'] = $display_name;
+  if(!empty($values['display'])) {
+    list($view_name, $display_name) = explode(':', $values['display']);
+    $form_state['values']['tvi']['display'] = $display_name;
+  }
 }
 
 /**
