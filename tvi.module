@@ -300,6 +300,10 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
       while (($current = array_shift($parents)) && (!$settings || !$settings->status || !$settings->inherit)) {
         $settings = tvi_load_settings($current->tid, TVI_TYPE_TERM, FALSE);
       }
+      // Avoids the case where no parent of the term are inheritables.
+      if (!$settings->inherit) {
+        $settings = FALSE;
+      }
     }
 
     // If the term and its parents have no settings, take the vocabulary's one.
