@@ -190,8 +190,6 @@ function theme_tvi_term_description($term) {
  *
  * If more or less than one term is given then pass the request off
  * to the original taxonomy module page callback.
- *
- * @TODO: Enable support for > 1 term.
  */
 function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
   if (is_object($tid)) {
@@ -199,18 +197,8 @@ function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
   }
 
   list($view, $display, $term, $settings) = tvi_get_view_info($tid);
-  //$desc = theme('tvi_term_description', $term->name);
   if (is_object($view) && $display) {
-    $view->set_display($display);
-    $view->set_arguments(array($tid, $depth));
-    $view->build();
-
-    // TODO FIX below
-    // drupal_set_breadcrumb(theme('tvi_breadcrumb', $term->name, $view));
-    // We might be using the default view.
-
-    drupal_set_title(filter_xss_admin($view->get_title()), PASS_THROUGH);
-    return ((isset($desc)) ? $desc : '') . $view->preview();
+    return $view->execute_display($display, array($tid, $depth));
   }
 
   // Taxonomy is last resort - used if no standard views are found
