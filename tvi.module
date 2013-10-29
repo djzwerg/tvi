@@ -245,7 +245,7 @@ function tvi_get_view_info($tid) {
   $display  = NULL;
   $settings = isset($info->settings) ? $info->settings : NULL;
 
-  if (is_object($view) && is_object($settings) && $settings->status) {
+  if (is_object($view) && is_object($settings) && isset($settings->status) && $settings->status) {
     $display = $settings->display;
   }
 
