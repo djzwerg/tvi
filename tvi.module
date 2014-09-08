@@ -107,6 +107,11 @@ function tvi_menu_alter(&$items) {
 
   // Avoid views to override tvi
   unset($items['taxonomy/term/%']);
+
+  // Views might have completely wiped the original title callback, so restore it.
+  // This is useful for breadcrumb-generating modules such as Crumbs or Easy breadcrumbs.
+  $items['taxonomy/term/%taxonomy_term']['title callback']   = 'taxonomy_term_title';
+  $items['taxonomy/term/%taxonomy_term']['title arguments']  = array(2);
 }
 
 /**
