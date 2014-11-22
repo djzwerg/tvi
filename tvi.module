@@ -196,7 +196,7 @@ function theme_tvi_term_description($term) {
  * If more or less than one term is given then pass the request off
  * to the original taxonomy module page callback.
  */
-function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
+function tvi_render_view($tid = '', $depth = NULL) {
   if (is_object($tid)) {
     $tid = $tid->tid;
   }
@@ -207,11 +207,9 @@ function tvi_render_view($tid = '', $depth = 0, $op = 'page') {
     metatag_entity_view($term, 'taxonomy_term', 'full', NULL);
   }
   if (is_object($view) && $display) {
-    if (isset($view->display_handler->display->display_options['arguments']['term_node_tid_depth']['depth'])) {
-      $args = array($tid, $view->display_handler->display->display_options['arguments']['term_node_tid_depth']['depth']);
-    }
-    else {
-      $args = array($tid);
+    $args = array($tid);
+    if (NULL !== $depth) {
+      $args[] = $depth;
     }
 
     if ($view->display[$display]->display_plugin == 'block') {
