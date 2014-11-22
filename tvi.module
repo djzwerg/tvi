@@ -207,9 +207,15 @@ function tvi_render_view($tid = '', $depth = NULL) {
     metatag_entity_view($term, 'taxonomy_term', 'full', NULL);
   }
   if (is_object($view) && $display) {
-    $args = array($tid);
-    if (NULL !== $depth) {
-      $args[] = $depth;
+    if (isset($settings->pass_arguments) && $settings->pass_arguments == 1) {
+      // Pass all arguments to views. Exclude /taxonomy/term.
+      $args = array_slice(arg(), 2);
+    }
+    else {
+      $args = array($tid);
+      if (NULL !== $depth) {
+        $args[] = $depth;
+      }
     }
 
     if ($view->display[$display]->display_plugin == 'block') {
