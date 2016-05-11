@@ -149,7 +149,7 @@ function tvi_remove_settings($xid, $type = TVI_TYPE_TERM) {
  *
  * @param string|int $xid
  *   The identifier of the object for which we are loading these settings. It
- *   can be an integer or and UUID.
+ *   can be an integer and/or a UUID.
  * @param string $type
  *   The type of the object for which we are loading these settings. It can be
  *   TVI_TYPE_TERM or TVI_TYPE_VOCAB.
