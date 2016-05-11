@@ -164,7 +164,7 @@ function _tvi_get_xid($xid, $type = TVI_TYPE_TERM) {
       $xid = $vocabulary->machine_name;
     }
   }
-  elseif ($type == TVI_TYPE_TERM && module_exists('uuid')) {
+  elseif ($type == TVI_TYPE_TERM && module_exists('uuid') && $xid != '_autocreate') {
     $uuids = entity_get_uuid_by_id('taxonomy_term', array($xid));
     $uuid = reset($uuids);
     if (!empty($uuid)) {
