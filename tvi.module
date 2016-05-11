@@ -253,6 +253,8 @@ function tvi_render_view($tid, $depth = NULL) {
       $output = $block['content'];
     }
     else {
+      global $language;
+      module_invoke_all('entity_view', $term, 'taxonomy_term', 'full', $language->language);
       $output = $view->execute_display($display, $args);
     }
 
