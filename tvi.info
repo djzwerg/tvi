@@ -1,7 +1,10 @@
+type = module
 name = TVI: Taxonomy View Integrator
 description = Enables automatic application of views to taxonomy terms and vocabulary.
-core = 7.x
+package = Views
+backdrop = 1.x
 
 dependencies[] = views
 dependencies[] = taxonomy
+
 configure = admin/config/user-interface/tvi

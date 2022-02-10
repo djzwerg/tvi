@@ -54,7 +54,7 @@ function tvi_default_settings($type = TVI_TYPE_TERM, $xid = 0) {
 function tvi_load_settings($xid, $type = TVI_TYPE_TERM, $return_default = TRUE) {
   $xid = _tvi_get_xid($xid, $type);
 
-  $settings = variable_get('tvi_' . $type . '_' . $xid, FALSE);
+  $settings = config_get('tvi.settings', 'tvi_' . $type . '_' . $xid);
   $settings = is_array($settings) ? (object) $settings : $settings;
 
   $settings = tvi_validate_settings($settings);
@@ -122,7 +122,7 @@ function tvi_update_settings($settings) {
   // Do not store the view object.
   unset($settings['view']);
 
-  variable_set('tvi_' . $settings['type'] . '_' . $settings['xid'], $settings);
+  config_set('tvi.settings', 'tvi_' . $settings['type'] . '_' . $settings['xid'], $settings);
 }
 
 /**
@@ -138,7 +138,7 @@ function tvi_update_settings($settings) {
 function tvi_remove_settings($xid, $type = TVI_TYPE_TERM) {
   $xid = _tvi_get_xid($xid, $type);
 
-  variable_del('tvi_' . $type . '_' . $xid);
+  config_clear('tvi.settings', 'tvi_' . $type . '_' . $xid);
 }
 
 /**
@@ -188,7 +188,7 @@ function _tvi_convert_tids_to_uuids() {
     ->fetchAll();
 
   foreach ($variables as $variable) {
-    $tid = drupal_substr($variable->name, drupal_strlen('tvi_' . TVI_TYPE_TERM . '_'));
+    $tid = backdrop_substr($variable->name, backdrop_strlen('tvi_' . TVI_TYPE_TERM . '_'));
     $uuid = reset(entity_get_uuid_by_id('taxonomy_term', array($tid)));
     if (!empty($uuid) && $tid != $uuid) {
       db_update('variable')
@@ -213,7 +213,7 @@ function _tvi_convert_uuids_to_tids() {
     ->fetchAll();
 
   foreach ($variables as $variable) {
-    $uuid = drupal_substr($variable->name, drupal_strlen('tvi_' . TVI_TYPE_TERM . '_'));
+    $uuid = backdrop_substr($variable->name, backdrop_strlen('tvi_' . TVI_TYPE_TERM . '_'));
     $tid = db_select('taxonomy_term_data', 'ttd')
       ->fields('ttd', array('tid'))
       ->condition('ttd.uuid', $uuid)

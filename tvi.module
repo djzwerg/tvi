@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Allow to define views to be used instead of default drupal behavior on
+ * Allow to define views to be used instead of default backdrop behavior on
  * taxonomy terms pages.
  */
 
@@ -34,7 +34,7 @@ module_load_include('inc', 'tvi', 'includes/tvi.admin');
 module_load_include('inc', 'tvi', 'includes/tvi.query');
 
 // -----------------------------------------------------------------------------
-// Drupal hooks
+// Backdrop hooks
 // -----------------------------------------------------------------------------
 
 /**
@@ -85,7 +85,7 @@ function tvi_permission() {
 function tvi_menu() {
   $items['admin/config/user-interface/tvi'] = array(
     'title' => 'TVI settings',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('tvi_settings_form'),
     'access arguments' => array('administer taxonomy views integrator'),
     'file' => 'includes/tvi.admin.inc',
@@ -249,7 +249,7 @@ function tvi_render_view($tid, $depth = NULL) {
       // as a page callback so we need to explicitly set the page title
       // and just return the $block['content'].
       $block = $view->execute_display($display, $args);
-      drupal_set_title(filter_xss_admin($block['subject']), PASS_THROUGH);
+      backdrop_set_title(filter_xss_admin($block['subject']), PASS_THROUGH);
       $output = $block['content'];
     }
     else {
@@ -361,7 +361,7 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
     // If the term has no settings, search for parent terms' ones.
     if (!$settings || empty($settings->status)) {
       // Get all the term's ancestors.
-      $parents = taxonomy_get_parents_all($term->tid);
+      $parents = taxonomy_term_load_parents_all($term->tid);
       // Remove the current term from the array.
       array_shift($parents);
       // While the settings are not set, not active or not inheritables.
@@ -385,7 +385,7 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
     }
 
     $term_info[$tid] = array(
-      'term'     => $term,
+      'term' => $term,
       'settings' => $settings,
     );
 
@@ -448,7 +448,7 @@ function tvi_get_breadcrumb($term, $view) {
     foreach ($view->build_info['breadcrumb'] as $path => $title) {
       // Check to see if the frontpage is in the breadcrumb trail; if it
       // is, we'll remove that from the actual breadcrumb later.
-      if ($path == variable_get('site_frontpage', 'node')) {
+      if ($path == config_get('system.performance', 'site_frontpage')) {
         $base = FALSE;
         $title = t('Home');
       }
@@ -457,7 +457,7 @@ function tvi_get_breadcrumb($term, $view) {
       }
     }
     if ($base) {
-      $breadcrumb = array_merge(drupal_get_breadcrumb(), $breadcrumb);
+      $breadcrumb = array_merge(backdrop_get_breadcrumb(), $breadcrumb);
     }
   }
   return $breadcrumb;

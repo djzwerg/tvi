@@ -81,8 +81,8 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   $form['#validate'][] = 'tvi_validate_handler';
   $form['#submit'][]   = 'tvi_submit_handler';
   // Add JS & CSS.
-  $form['#attached']['js'][] = drupal_get_path('module', 'tvi') . '/tvi.js';
-  $form['#attached']['css'][] = drupal_get_path('module', 'tvi') . '/tvi.css';
+  $form['#attached']['js'][] = backdrop_get_path('module', 'tvi') . '/js/tvi.js';
+  $form['#attached']['css'][] = backdrop_get_path('module', 'tvi') . '/css/tvi.css';
 
   // Form container.
   $form['tvi'] = array(
@@ -107,12 +107,12 @@ function tvi_taxonomy_admin_form(&$form, $settings) {
   );
 
   $form['tvi']['type'] = array(
-    '#type'  => 'value',
+    '#type' => 'value',
     '#value' => $settings->type,
   );
 
   $form['tvi']['xid'] = array(
-    '#type'  => 'value',
+    '#type' => 'value',
     '#value' => $settings->xid,
   );
 
@@ -252,7 +252,7 @@ function tvi_submit_handler($form, &$form_state) {
   if (!$settings->is_default || $settings->status) {
     tvi_update_settings($settings);
     if ($settings->type == TVI_TYPE_ALL) {
-      drupal_set_message(t('The configuration options have been saved.'));
+      backdrop_set_message(t('The configuration options have been saved.'));
     }
   }
 }
