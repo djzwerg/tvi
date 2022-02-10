@@ -139,7 +139,7 @@ function tvi_form_alter(&$form, $form_state, $form_id) {
  */
 function tvi_taxonomy_vocabulary_delete($vocabulary) {
   tvi_include('query');
-  tvi_remove_settings($vocabulary->vid, TVI_TYPE_VOCAB);
+  tvi_remove_settings($vocabulary->machine_name, TVI_TYPE_VOCAB);
 }
 
 /**
@@ -376,7 +376,7 @@ function tvi_get_term_info($tid, $type = TVI_DATATYPE_VIEW) {
 
     // If the term and its parents have no settings, take the vocabulary's one.
     if (!$settings || empty($settings->status)) {
-      $settings = tvi_load_settings($term->vid, TVI_TYPE_VOCAB, FALSE);
+      $settings = tvi_load_settings($term->vocabulary, TVI_TYPE_VOCAB, FALSE);
     }
 
     // If the vocabulary have no settings, take the global settings.

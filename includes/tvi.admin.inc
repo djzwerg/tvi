@@ -7,20 +7,20 @@
 /**
  * Adds TVI administration form to the vocabulary edit page.
  *
- * admin/content/taxonomy/edit/vocabulary/$vid
+ * admin/content/taxonomy/edit/vocabulary/$machine_name
  *
  * @param array $form
  *   The vocabulary edit form.
  */
 function tvi_vocab_form(&$form) {
   if (array_key_exists('#vocabulary', $form)) {
-    $vid = '_autocreate';
-    if (!empty($form['#vocabulary']->vid)) {
-      $vid = (int) $form['#vocabulary']->vid;
+    $machine_name = '_autocreate';
+    if (!empty($form['#vocabulary']->machine_name)) {
+      $machine_name = (int) $form['#vocabulary']->machine_name;
     }
 
     tvi_include('query');
-    tvi_taxonomy_admin_form($form, tvi_load_settings($vid, TVI_TYPE_VOCAB));
+    tvi_taxonomy_admin_form($form, tvi_load_settings($machine_name, TVI_TYPE_VOCAB));
   }
 }
 
@@ -241,7 +241,7 @@ function tvi_submit_handler($form, &$form_state) {
   // Handle the case of the creation form.
   if (empty($settings->xid) || $settings->xid == '_autocreate') {
     if ($settings->type == TVI_TYPE_VOCAB) {
-      $settings->xid = $form_state['vocabulary']->vid;
+      $settings->xid = $form_state['vocabulary']->machine_name;
     }
     elseif ($settings->type == TVI_TYPE_TERM) {
       $settings->xid = $form_state['term']->tid;
